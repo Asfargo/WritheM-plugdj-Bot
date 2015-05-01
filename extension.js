@@ -38,7 +38,7 @@
             command: 'wa',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
             type: 'vars', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            url: 'https://10.1.1.15/wolfram/?q=writhem',
+            url: 'https://news.writhem.com/wolfram/?q=',
             functionality: function (chat, cmd) {
                 console.log(chat);
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
@@ -94,7 +94,7 @@
             ["mix", "You played a mix, which is against the rules. "],
             ["sound", "The song you played had bad sound quality or no sound. "],
             ["nsfw", "The song you contained was NSFW (image or sound). "],
-            ["unavailable", "The song you played was not available for some users. "]
+            ["broken", "The song you played was not available for some users. "]
         ],
         afkpositionCheck: 5,
         afkRankCheck: "ambassador",
@@ -106,12 +106,12 @@
         welcome: true,
         opLink: null,
         rulesLink: null,
-        themeLink: null,
-        fbLink: null,
+        themeLink: "http://wiki.writhem.com/display/radio/Our+Music+Choices",
+        fbLink: "http://facebook.com/writhem",
         youtubeLink: null,
-        website: null,
-        intervalMessages: [],
-        messageInterval: 5,
+        website: "http://radio.writhem.com/",
+        intervalMessages: ["Thanks for migrating to the new platform with us! Welcome to WritheM Radio 3.0 Our 3rd host in 4 years."],
+        messageInterval: 10,
         songstats: true,
         commandLiteral: "!",
         blacklists: {
