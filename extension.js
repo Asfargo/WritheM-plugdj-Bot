@@ -38,7 +38,7 @@
             command: 'wa',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
             type: 'vars', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            url: 'http://10.1.1.3:81/wolfram/?q=',
+            url: 'https://10.1.1.15/wolfram/?q=writhem',
             functionality: function (chat, cmd) {
                 console.log(chat);
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
@@ -67,7 +67,7 @@
         startupCap: 1, // 1-200
         startupVolume: 0, // 0-100
         startupEmoji: false, // true or false
-        cmdDeletion: true,
+        cmdDeletion: false,
         chatLink: "https://rawgit.com/Yemasthui/basicBot/master/lang/en.json",
         maximumAfk: 1440,
         afkRemoval: false,
