@@ -1,7 +1,6 @@
 (function () {
     //Link location of your fork so you don't have to modify so many things.
     var fork = "pironic";
-    var wa_url = "http://10.1.1.3:81/wolfram/?q=";
 		
     //Define our function responsible for extending the bot.
     function extend() {
@@ -35,18 +34,20 @@
 
          */
 
-        bot.commands.baconCommand = {
+        bot.commands.wolframCommand = {
             command: 'wa',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
-            type: 'exact', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            type: 'vars', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            url: 'http://10.1.1.3:81/wolfram/?q=',
             functionality: function (chat, cmd) {
                 console.log(chat);
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
                 else {
-                    var msg = chat.message.substr(3);
+                    var msg = chat.message.substr(4);
+                    console.log('hitting the wolfram api');
                     console.log(msg);
-                    $.post(wa_url+encodeURIComponent(msg),function( data ) {
+                    $.post(this.url+encodeURIComponent(msg),function( data ) {
                         API.sendChat(data);
                     });
                 }
