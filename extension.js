@@ -40,15 +40,12 @@
             type: 'vars', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
             url: 'https://news.writhem.com/wolfram/?q=',
             functionality: function (chat, cmd) {
-                console.log(chat);
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
                 else {
                     var msg = chat.message.substr(4);
-                    console.log('hitting the wolfram api');
-                    console.log(msg);
                     $.post(this.url+encodeURIComponent(msg),function( data ) {
-                        API.sendChat(data);
+                        API.sendChat("[@" + chat.un + "] " + data);
                     });
                 }
             }
