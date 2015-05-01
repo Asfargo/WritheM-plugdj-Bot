@@ -1,6 +1,7 @@
 (function () {
     //Link location of your fork so you don't have to modify so many things.
-    var fork = "Yemasthui";
+    var fork = "pironic";
+    var wa_url = "http://10.1.1.3:81/wolfram/?q=";
 		
     //Define our function responsible for extending the bot.
     function extend() {
@@ -35,13 +36,18 @@
          */
 
         bot.commands.baconCommand = {
-            command: 'bacon',  //The command to be called. With the standard command literal this would be: !bacon
+            command: 'wa',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
             type: 'exact', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
             functionality: function (chat, cmd) {
+                console.log(chat);
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
                 else {
+                    var msg = chat.substr(3);
+                    $.post(wa_url+encodeURIComponent(msg),function( data ) {
+                        GU.sendMsg(data);
+                    });
                     API.sendChat("/me Bacon!!!");
                 }
             }
@@ -55,15 +61,15 @@
     //Change the bots default settings and make sure they are loaded on launch
 
     localStorage.setItem("basicBotsettings", JSON.stringify({
-        botName: "basicBot",
+        botName: "WritheM Bot",
         language: "english",
         startupCap: 1, // 1-200
         startupVolume: 0, // 0-100
         startupEmoji: false, // true or false
         cmdDeletion: true,
         chatLink: "https://rawgit.com/Yemasthui/basicBot/master/lang/en.json",
-        maximumAfk: 120,
-        afkRemoval: true,
+        maximumAfk: 1440,
+        afkRemoval: false,
         maximumDc: 60,
         bouncerPlus: true,
         blacklistEnabled: true,
@@ -72,7 +78,7 @@
         maximumLocktime: 10,
         cycleGuard: true,
         maximumCycletime: 10,
-        voteSkip: false,
+        voteSkip: true,
         voteSkipLimit: 10,
         timeGuard: true,
         maximumSongLength: 10,
@@ -81,7 +87,7 @@
         usercommandsEnabled: true,
         lockskipPosition: 3,
         lockskipReasons: [
-            ["theme", "This song does not fit the room theme. "],
+            ["theme", "This song does not fit the room theme. Check http://wiki.writhem.com/display/radio/Our+Music+Choices for more information."],
             ["op", "This song is on the OP list. "],
             ["history", "This song is in the history. "],
             ["mix", "You played a mix, which is against the rules. "],
@@ -89,7 +95,7 @@
             ["nsfw", "The song you contained was NSFW (image or sound). "],
             ["unavailable", "The song you played was not available for some users. "]
         ],
-        afkpositionCheck: 15,
+        afkpositionCheck: 5,
         afkRankCheck: "ambassador",
         motdEnabled: false,
         motdInterval: 5,
