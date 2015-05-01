@@ -44,11 +44,11 @@
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
                 else {
-                    var msg = chat.substr(3);
+                    var msg = chat.message.substr(3);
+                    console.log(msg);
                     $.post(wa_url+encodeURIComponent(msg),function( data ) {
-                        GU.sendMsg(data);
+                        API.sendChat(data);
                     });
-                    API.sendChat("/me Bacon!!!");
                 }
             }
         };
