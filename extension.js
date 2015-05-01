@@ -45,7 +45,7 @@
                 else { 
                     var msg = chat.message.substr(4);
                     $.post(this.url+encodeURIComponent(msg),function( data ) {
-                        API.sendChat("[@" + chat.un + "] " + data);
+                        API.sendChat("[@" + chat.un + "] " + data); 
                     });
                 }
             }
