@@ -69,52 +69,47 @@
         bot.commands.rollCommand = {
             command: 'roll',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
-            type: 'vars', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
             defaultDice: [1,100],
             functionality: function (chat, cmd) {
-                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                if (!bot.commands.executable(this.rank, chat)) return void (0);
-                else { 
-                    var params = chat.message.substr(cmd.length + 2);
-                    var numDice = 1;
-                    var typeDie = 100;
-                    var diceArray = this.defaultDice;
-                    if (params !== undefined)
-                        diceArray = params.split('d');
-                    var capped = false;
-                    //console.log(diceArray);
-                    if(diceArray && diceArray.length > 1){
-                        if(!isNaN(diceArray[0])) numDice = diceArray[0];
-                        if(!isNaN(diceArray[1])) typeDie = diceArray[1];
-                        if(typeDie > 1000) {
-                            typeDie = 1000; capped = true;
-                        }
-                        else if (typeDie < 1) {
-                            typeDie = 1; capped = true;
-                        }
-                        if(numDice > 1000) {
-                            numDice = 1000; capped = true;
-                        }
-                        else if (numDice < 1) {
-                            numDice = 1; capped = true;
-                        }
-
+                var params = chat.message.substr(cmd.length + 2);
+                console.log(params);
+                var numDice = 1;
+                var typeDie = 100;
+                var diceArray = this.defaultDice;
+                if (params !== undefined)
+                    diceArray = params.split('d');
+                var capped = false;
+                console.log(diceArray);
+                if(diceArray && diceArray.length > 1){
+                    if(!isNaN(diceArray[0])) numDice = diceArray[0];
+                    if(!isNaN(diceArray[1])) typeDie = diceArray[1];
+                    if(typeDie > 1000) {
+                        typeDie = 1000; capped = true;
+                    }
+                    else if (typeDie < 1) {
+                        typeDie = 1; capped = true;
+                    }
+                    if(numDice > 1000) {
+                        numDice = 1000; capped = true;
+                    }
+                    else if (numDice < 1) {
+                        numDice = 1; capped = true;
                     }
 
-                    if(capped)
-                    {
-                        API.sendChat("Dice Rolls capped to < 1000d1000 & > 1d1");
-                    }
-
-                    var diceRoll = 0;
-                    for(var i = 0; i < numDice; i++)
-                    {
-                        diceRoll += Math.floor((Math.random()*typeDie)+1);
-                    }
-
-                    request.sendChat("@"+chat.un+" rolled a "+diceRoll);
-                    API.sendChat("[@" + chat.un + "] Pong!"); 
                 }
+
+                if(capped)
+                {
+                    API.sendChat("Dice Rolls capped to < 1000d1000 & > 1d1");
+                }
+
+                var diceRoll = 0;
+                for(var i = 0; i < numDice; i++)
+                {
+                    diceRoll += Math.floor((Math.random()*typeDie)+1);
+                }
+
+                API.sendChat("@"+chat.un+" rolled a "+diceRoll);
             }
         };
 
