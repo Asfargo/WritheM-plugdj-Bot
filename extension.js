@@ -61,7 +61,7 @@
                 else { 
                     console.log(cmd);
                     console.log(chat);
-                    API.sendChat("[@" + chat.un + "] Pong!"); 
+                    API.sendChat("[@" + chat.un + "] Pong! Your user id is " + chat.uid); 
                 }
             }
         };
@@ -100,7 +100,7 @@
 
                 if(capped)
                 {
-                    API.sendChat("Dice Rolls capped to < 1000d1000 & > 1d1");
+                    //API.sendChat("Dice Rolls capped to < 1000d1000 & > 1d1");
                 }
 
                 var diceRoll = 0;
@@ -127,7 +127,7 @@
         startupVolume: 0, // 0-100
         startupEmoji: false, // true or false
         cmdDeletion: false,
-        chatLink: "https://rawgit.com/Yemasthui/basicBot/master/lang/en.json",
+        chatLink: "https://rawgit.com/pironic/basicBot-customization/master/lang/en.json",
         maximumAfk: 1440,
         afkRemoval: false,
         maximumDc: 60,
@@ -141,7 +141,7 @@
         voteSkip: true,
         voteSkipLimit: 10,
         timeGuard: true,
-        maximumSongLength: 10,
+        maximumSongLength: 16,
         autodisable: true,
         commandCooldown: 30,
         usercommandsEnabled: true,
@@ -171,7 +171,7 @@
         website: "http://radio.writhem.com/",
         intervalMessages: ["Thanks for migrating to the new platform with us! Welcome to WritheM Radio 3.0 Our 3rd host in 4 years."],
         messageInterval: 10,
-        songstats: true,
+        songstats: false,
         commandLiteral: "!",
         blacklists: {
             NSFW: "https://rawgit.com/" + fork + "/basicBot-customization/master/blacklists/ExampleNSFWlist.json",
