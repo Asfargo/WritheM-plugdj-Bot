@@ -134,7 +134,7 @@
             command: 'source',
             rank: 'user',
             functionality: function (chat, cmd) {
-                API.sendChat('/me This bot was created by Matthew (Yemasthui), but is now maintained by Michael Writhe. You can find our open source fork at https://github.com/pironic/basicBot-customization');
+                API.sendChat('/me This bot was created by Matthew (Yemasthui), but is now maintained by Michael Writhe. You can find our open source fork at https://github.com/pironic/WritheM-plugdj-Bot');
             }
         };
 
@@ -153,7 +153,7 @@
         startupVolume: 0, // 0-100
         startupEmoji: false, // true or false
         cmdDeletion: false,
-        chatLink: "https://rawgit.com/pironic/basicBot-customization/master/lang/en.json",
+        chatLink: "https://rawgit.com/pironic/WritheM-plugdj-Bot/master/lang/en.json",
         maximumAfk: 1440,
         afkRemoval: false,
         maximumDc: 60,
@@ -200,8 +200,8 @@
         songstats: false,
         commandLiteral: "!",
         blacklists: {
-            NSFW: "https://rawgit.com/" + fork + "/basicBot-customization/master/blacklists/ExampleNSFWlist.json",
-            OP: "https://rawgit.com/" + fork + "/basicBot-customization/master/blacklists/ExampleOPlist.json"
+            NSFW: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/ExampleNSFWlist.json",
+            OP: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/ExampleOPlist.json"
         }
     }));
 
