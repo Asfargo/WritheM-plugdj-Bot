@@ -1,6 +1,7 @@
 (function () {
     //Link location of your fork so you don't have to modify so many things.
     var fork = "pironic";
+    var build = 46;
 		
     //Define our function responsible for extending the bot.
     function extend() {
@@ -11,6 +12,8 @@
 
         //Precaution to make sure it is assigned properly.
         var bot = window.bot;
+        bot.version = bot.version + '.' + build;
+
 
         //Load custom settings set below
         bot.retrieveSettings();
