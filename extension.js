@@ -22,7 +22,7 @@
             command: 'wa',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
             type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            url: 'https://news.writhem.com/wolfram/?q=',
+            url: 'https://news.writhem.com/wolfram/?q=', // this is a private url and can't be accessed outside the writhem network. dont' bother even trying. ;-)
             functionality: function (chat, cmd) {
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
@@ -124,7 +124,7 @@
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
                 else {
-                    var link = "http://wiki.writhem.com/display/radio/FAQ";
+                    var link = "http://bit.ly/wmr-faq";
                     API.sendChat(subChat(bot.chat.starterhelp, {link: link}));
                 }
             }
@@ -134,7 +134,7 @@
             command: 'source',
             rank: 'user',
             functionality: function (chat, cmd) {
-                API.sendChat('/me This bot was created by Matthew (Yemasthui), but is now maintained by Michael Writhe. You can find our open source fork at https://github.com/pironic/WritheM-plugdj-Bot');
+                API.sendChat('/me This bot was created by Matthew (Yemasthui), but is now maintained by Michael Writhe (pironic). You can find our open source fork at https://github.com/' + fork + '/WritheM-plugdj-Bot');
             }
         };
 
@@ -153,7 +153,7 @@
         startupVolume: 0, // 0-100
         startupEmoji: false, // true or false
         cmdDeletion: false,
-        chatLink: "https://rawgit.com/pironic/WritheM-plugdj-Bot/master/lang/en.json",
+        chatLink: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/lang/en.json",
         maximumAfk: 1440,
         afkRemoval: false,
         maximumDc: 60,
