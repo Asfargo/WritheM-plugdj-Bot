@@ -122,10 +122,10 @@
             type: 'exact',
             functionality: function (chat, cmd) {
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                if (!basicBot.commands.executable(this.rank, chat)) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
                 else {
                     var link = "http://wiki.writhem.com/display/radio/FAQ";
-                    API.sendChat(subChat(basicBot.chat.starterhelp, {link: link}));
+                    API.sendChat(subChat(bot.chat.starterhelp, {link: link}));
                 }
             }
         };
