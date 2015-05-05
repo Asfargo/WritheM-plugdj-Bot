@@ -37,7 +37,7 @@
         bot.commands.wolframCommand = {
             command: 'wa',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
-            type: 'vars', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
             url: 'https://news.writhem.com/wolfram/?q=',
             functionality: function (chat, cmd) {
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
@@ -128,7 +128,7 @@
             }
         };
         
-        bot.commandshelpCommand: {
+        bot.commands.helpCommand: {
             command: 'help',
             rank: 'user',
             type: 'exact',
@@ -142,6 +142,13 @@
             }
         };
         
+        bot.commands.sourceCommand: {
+            command: 'source',
+            rank: 'user',
+            functionality: function (chat, cmd) {
+                API.sendChat('/me This bot was created by ' + botCreator + ', but is now maintained by Michael Writhe.');
+            }
+        };
 
 
         //Load the chat package again to account for any changes
