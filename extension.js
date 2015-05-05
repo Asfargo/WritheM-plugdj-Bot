@@ -128,7 +128,7 @@
             }
         };
         
-        bot.commands.helpCommand: {
+        bot.commands.helpCommand = {
             command: 'help',
             rank: 'user',
             type: 'exact',
@@ -142,7 +142,7 @@
             }
         };
         
-        bot.commands.sourceCommand: {
+        bot.commands.sourceCommand = {
             command: 'source',
             rank: 'user',
             functionality: function (chat, cmd) {
