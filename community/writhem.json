@@ -2,7 +2,7 @@
     "css": "https://rawgit.com/pironic/writhem-plugdj-bot/community/writhem_room.css",
     "rules": {
         "allowAutorespond": true,
-        "allowAutowoot": true,
+        "allowAutowoot": false,
         "allowAutojoin": false,
         "allowAutograb": true
     },

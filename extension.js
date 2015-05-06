@@ -1,7 +1,7 @@
 (function () {
     //Link location of your fork so you don't have to modify so many things.
     var fork = "pironic";
-    var build = 46;
+    var build = 47;
 		
     //Define our function responsible for extending the bot.
     function extend() {
@@ -140,6 +140,26 @@
                 API.sendChat('/me This bot was created by Matthew (Yemasthui), but is now maintained by Michael Writhe (pironic). You can find our open source fork at https://github.com/' + fork + '/WritheM-plugdj-Bot');
             }
         };
+
+        /* ******************************** *
+         * WRITHEM EVENT HANDLER OVERLOADS *
+         * ****************************** */
+
+        var overloads = {
+            eventChat: $.proxy(function(chat) {console.log(chat)}, this)
+        };
+        bot.connectAPI = function() {
+            API.chatLog("Loading WritheM Specific Event Handlers...")
+
+            API.on(API.CHAT, overloads.eventChat);
+        }
+        var basicBotDisconnect = bot.disconnectAPI;
+        bot.disconnectAPI = function() {
+            API.off(API.CHAT, overloads.eventChat);
+
+            basicBotDisconnect();
+        }
+        bot.connectAPI();
 
 
         //Load the chat package again to account for any changes
