@@ -84,7 +84,7 @@
                 API.sendChat("@"+chat.un+" rolled a "+diceRoll);
             }
         };
-        
+
         bot.commands.rcsCommand = {
             command: 'rcs',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
@@ -92,17 +92,46 @@
             functionality: function (chat, cmd) {
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
-                else { 
+                else {
                     console.log(cmd);
                     console.log(chat);
-                    API.sendChat("[@" + chat.un + "] Radiant's RCS is a suite of tools to upgrade and enhance your plug.dj experience. Download it here: https://rcs.radiant.dj/ Direct USERSCRIPT link: https://code.radiant.mu/rs.user.js"); 
+                    API.sendChat("[@" + chat.un + "] Radiant's RCS is a suite of tools to upgrade and enhance your plug.dj experience. Download it here: https://rcs.radiant.dj/ Direct USERSCRIPT link: https://code.radiant.mu/rs.user.js");
                 }
             }
         };
-        
-         /* ************************* *
-         * DEFAULT COMMAND OVERLOADS *
-        * ************************* */
+
+        bot.commands.sayCommand = {
+            command: 'say',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'manager', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    API.moderateDeleteChat(chat.cid);
+                    API.sendChat("[@" + chat.un + "] " + chat.message.substr(cmd.length + 1));
+                }
+            }
+        };
+
+        bot.commands.echoCommand = {
+            command: 'echo',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'cohost', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    API.moderateDeleteChat(chat.cid);
+                    API.sendChat(chat.message.substr(cmd.length + 1));
+                }
+            }
+        };
+
+
+        /* ************************* *
+        * DEFAULT COMMAND OVERLOADS *
+       * ************************* */
         
         bot.commands.pingCommand = {
             command: 'ping',  //The command to be called. With the standard command literal this would be: !bacon
