@@ -21,127 +21,6 @@
          * WRITHEM CUSTOM COMMANDS *
         * *********************** */
 
-        bot.commands.wolframCommand = {
-            command: 'wa',  //The command to be called. With the standard command literal this would be: !bacon
-            rank: 'user', //Minimum user permission to use the command
-            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            url: 'https://news.writhem.com/wolfram/?q=', // this is a private url and can't be accessed outside the writhem network. dont' bother even trying. ;-)
-            functionality: function (chat, cmd) {
-                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                if (!bot.commands.executable(this.rank, chat)) return void (0);
-                else { 
-                    var msg = chat.message.substr(4);
-                    $.post(this.url+encodeURIComponent(msg),function( data ) {
-                        API.sendChat("[@" + chat.un + "] " + data); 
-                    });
-                }
-            }
-        };
-
-        bot.commands.rollCommand = {
-            command: 'roll',  //The command to be called. With the standard command literal this would be: !bacon
-            rank: 'user', //Minimum user permission to use the command
-            defaultDice: [1,100],
-            functionality: function (chat, cmd) {
-                var params = chat.message.substr(cmd.length + 2);
-                console.log(params);
-                var numDice = 1;
-                var typeDie = 100;
-                var diceArray = this.defaultDice;
-                if (params !== undefined)
-                    diceArray = params.split('d');
-                var capped = false;
-                console.log(diceArray);
-                if(diceArray && diceArray.length > 1){
-                    if(!isNaN(diceArray[0])) numDice = diceArray[0];
-                    if(!isNaN(diceArray[1])) typeDie = diceArray[1];
-                    if(typeDie > 1000) {
-                        typeDie = 1000; capped = true;
-                    }
-                    else if (typeDie < 1) {
-                        typeDie = 1; capped = true;
-                    }
-                    if(numDice > 1000) {
-                        numDice = 1000; capped = true;
-                    }
-                    else if (numDice < 1) {
-                        numDice = 1; capped = true;
-                    }
-
-                }
-
-                if(capped)
-                {
-                    //API.sendChat("Dice Rolls capped to < 1000d1000 & > 1d1");
-                }
-
-                var diceRoll = 0;
-                for(var i = 0; i < numDice; i++)
-                {
-                    diceRoll += Math.floor((Math.random()*typeDie)+1);
-                }
-
-                API.sendChat("@"+chat.un+" rolled a "+diceRoll);
-            }
-        };
-
-        bot.commands.rcsCommand = {
-            command: 'rcs',  //The command to be called. With the standard command literal this would be: !bacon
-            rank: 'user', //Minimum user permission to use the command
-            type: 'exact', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            functionality: function (chat, cmd) {
-                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                if (!bot.commands.executable(this.rank, chat)) return void (0);
-                else {
-                    console.log(cmd);
-                    console.log(chat);
-                    API.sendChat("[@" + chat.un + "] Radiant's RCS is a suite of tools to upgrade and enhance your plug.dj experience. Download it here: https://rcs.radiant.dj/ Direct USERSCRIPT link: https://code.radiant.mu/rs.user.js");
-                }
-            }
-        };
-
-        bot.commands.sayCommand = {
-            command: 'say',  //The command to be called. With the standard command literal this would be: !bacon
-            rank: 'manager', //Minimum user permission to use the command
-            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            functionality: function (chat, cmd) {
-                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                if (!bot.commands.executable(this.rank, chat)) return void (0);
-                else {
-                    API.moderateDeleteChat(chat.cid);
-                    API.sendChat("[@" + chat.un + "] " + chat.message.substr(cmd.length + 1));
-                }
-            }
-        };
-
-        bot.commands.echoCommand = {
-            command: 'echo',  //The command to be called. With the standard command literal this would be: !bacon
-            rank: 'cohost', //Minimum user permission to use the command
-            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            functionality: function (chat, cmd) {
-                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                if (!bot.commands.executable(this.rank, chat)) return void (0);
-                else {
-                    API.moderateDeleteChat(chat.cid);
-                    API.sendChat(chat.message.substr(cmd.length + 1));
-                }
-            }
-        };
-
-        bot.commands.seenCommand = {
-            command: 'seen',  //The command to be called. With the standard command literal this would be: !bacon
-            rank: 'user', //Minimum user permission to use the command
-            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            functionality: function (chat, cmd) {
-                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                if (!bot.commands.executable(this.rank, chat)) return void (0);
-                else {
-                    console.log(bot.userUtilities.getLastActivity(chat.message.substr(cmd.length + 1)));
-                    API.sendChat("Not implemented yet");
-                }
-            }
-        };
-
         bot.commands.afkCommand = {
             command: 'afk',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
@@ -198,10 +77,145 @@
             }
         };
 
+        bot.commands.echoCommand = {
+            command: 'echo',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'cohost', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    API.moderateDeleteChat(chat.cid);
+                    API.sendChat(chat.message.substr(cmd.length + 1));
+                }
+            }
+        };
+
+        bot.commands.rcsCommand = {
+            command: 'rcs',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            type: 'exact', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    console.log(cmd);
+                    console.log(chat);
+                    API.sendChat("[@" + chat.un + "] Radiant's RCS is a suite of tools to upgrade and enhance your plug.dj experience. Download it here: https://rcs.radiant.dj/ Direct USERSCRIPT link: https://code.radiant.mu/rs.user.js");
+                }
+            }
+        };
+
+        bot.commands.rollCommand = {
+            command: 'roll',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            defaultDice: [1,100],
+            functionality: function (chat, cmd) {
+                var params = chat.message.substr(cmd.length + 2);
+                console.log(params);
+                var numDice = 1;
+                var typeDie = 100;
+                var diceArray = this.defaultDice;
+                if (params !== undefined)
+                    diceArray = params.split('d');
+                var capped = false;
+                console.log(diceArray);
+                if(diceArray && diceArray.length > 1){
+                    if(!isNaN(diceArray[0])) numDice = diceArray[0];
+                    if(!isNaN(diceArray[1])) typeDie = diceArray[1];
+                    if(typeDie > 1000) {
+                        typeDie = 1000; capped = true;
+                    }
+                    else if (typeDie < 1) {
+                        typeDie = 1; capped = true;
+                    }
+                    if(numDice > 1000) {
+                        numDice = 1000; capped = true;
+                    }
+                    else if (numDice < 1) {
+                        numDice = 1; capped = true;
+                    }
+
+                }
+
+                if(capped)
+                {
+                    //API.sendChat("Dice Rolls capped to < 1000d1000 & > 1d1");
+                }
+
+                var diceRoll = 0;
+                for(var i = 0; i < numDice; i++)
+                {
+                    diceRoll += Math.floor((Math.random()*typeDie)+1);
+                }
+
+                API.sendChat("@"+chat.un+" rolled a "+diceRoll);
+            }
+        };
+
+        bot.commands.sayCommand = {
+            command: 'say',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'manager', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    API.moderateDeleteChat(chat.cid);
+                    API.sendChat("[@" + chat.un + "] " + chat.message.substr(cmd.length + 1));
+                }
+            }
+        };
+
+        bot.commands.seenCommand = {
+            command: 'seen',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    console.log(bot.userUtilities.getLastActivity(chat.message.substr(cmd.length + 1)));
+                    API.sendChat("Not implemented yet");
+                }
+            }
+        };
+
+        bot.commands.wolframCommand = {
+            command: 'wa',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            url: 'https://news.writhem.com/wolfram/?q=', // this is a private url and can't be accessed outside the writhem network. dont' bother even trying. ;-)
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else { 
+                    var msg = chat.message.substr(4);
+                    $.post(this.url+encodeURIComponent(msg),function( data ) {
+                        API.sendChat("[@" + chat.un + "] " + data); 
+                    });
+                }
+            }
+        };
+
         /* ************************* *
         * DEFAULT COMMAND OVERLOADS *
        * ************************* */
-        
+
+        bot.commands.helpCommand = {
+            command: 'help',
+            rank: 'user',
+            type: 'exact',
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    var link = "http://bit.ly/wmr-faq";
+                    API.sendChat(subChat(bot.chat.starterhelp, {link: link}));
+                }
+            }
+        };
+
         bot.commands.pingCommand = {
             command: 'ping',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
@@ -213,20 +227,6 @@
                     console.log(cmd);
                     console.log(chat);
                     API.sendChat("[@" + chat.un + "] Pong! Your user id is " + chat.uid); 
-                }
-            }
-        };
-        
-        bot.commands.helpCommand = {
-            command: 'help',
-            rank: 'user',
-            type: 'exact',
-            functionality: function (chat, cmd) {
-                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
-                if (!bot.commands.executable(this.rank, chat)) return void (0);
-                else {
-                    var link = "http://bit.ly/wmr-faq";
-                    API.sendChat(subChat(bot.chat.starterhelp, {link: link}));
                 }
             }
         };
