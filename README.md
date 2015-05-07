@@ -11,9 +11,11 @@ Click [here](https://github.com/Yemasthui/basicBot) for basicBot's main reposito
 
 We load the bot on our room by clicking the following favourites link:
 
-`javascript:(function(){$.getScript('https://rawgit.com/pironic/basicBot-customization/master/extension.js');})();`
+`javascript:(function(){$.getScript('https://rawgit.com/pironic/WritheM-plugdj-Bot/master/extension.js');})();`
 
 Copyright
 ---------
+
 Copyright &copy; 2014 Yemasthui
+
 Copyright &copy; 2015 pironic
