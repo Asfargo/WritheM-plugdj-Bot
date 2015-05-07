@@ -278,23 +278,35 @@
                     delete bot.writhemAfkList[chat.un]
                     localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
                 }
+            },
+            advanceFailSafe: function(obj) {
+                window.clearInterval(bot.failSafeSkipTimer);
+                var duration = (obj.media.duration*1000)+5000;
+                console.log(duration);
+                bot.failSafeSkipTimer = setInterval(function() {console.log(API.moderateForceSkip()},duration);
             }
+
 
         }
         var proxy = {
             eventChat: $.proxy(function(chat) {
                 bot.writhemEvents.catchAFKPing(chat);
                 bot.writhemEvents.breakAFKChat(chat);
+            }, this),
+            eventDJAdvance: $.proxy(function(obj) {
+                bot.writhemEvents.advanceFailSafe(obj);
             }, this)
         };
-        bot.connectAPI = function() {
+        bot.writhemAPI = function() {
             API.chatLog("Loading WritheM Specific Event Handlers...")
 
             API.on(API.CHAT, proxy.eventChat);
+            API.on(API.ADVANCE, proxy.eventDJAdvance);
         }
         var basicBotDisconnect = bot.disconnectAPI;
         bot.disconnectAPI = function() {
             API.off(API.CHAT, proxy.eventChat);
+            API.off(API.ADVANCE,proxy.eventDJAdvance);
 
             basicBotDisconnect();
         }
@@ -303,11 +315,12 @@
          * WRITHEM START UP *
         * **************** */
 
-        bot.connectAPI();
+        bot.writhemAPI();
         var afkList = JSON.parse(localStorage.getItem("writhemAfkList"));
         if (afkList === null || typeof afkList === 'undefined')
             afkList = {};
         bot.writhemAfkList = afkList;
+        bot.cmdLink = "http://wiki.writhem.com/display/radio/Bot+Commands";
 
         //Load the chat package again to account for any changes
         bot.loadChat();
