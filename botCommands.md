@@ -10,6 +10,7 @@ User
 |Command | Arguments |  Description |
 |:------:|:---------:|:--------------------------------------:|
 |!8ball | (message) | ask the bot a question, the bot will return random variations of a yes or no answer. |
+|!about | | alias of !source |
 |!afk | (reason) | mark yourself as afk, so if someone tries to ping you, the bot will respond on your behalf |
 |!afkdisable |  | mark yourself as returned from afk |
 |!autowoot | | links to PlugCubed, the advised script/plugin to use for autowooting |

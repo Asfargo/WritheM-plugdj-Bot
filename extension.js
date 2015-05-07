@@ -21,6 +21,15 @@
          * WRITHEM CUSTOM COMMANDS *
         * *********************** */
 
+        bot.commands.aboutCommand = {
+            command: 'about',
+            rank: 'user',
+            functionality: function (chat, cmd) {
+                // alias of !source
+                bot.commands.sourceCommand.functionality(chat,cmd);
+            }
+        };
+
         bot.commands.afkCommand = {
             command: 'afk',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
