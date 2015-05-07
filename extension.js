@@ -283,7 +283,7 @@
                 window.clearInterval(bot.failSafeSkipTimer);
                 var duration = (obj.media.duration*1000)+5000;
                 console.log(duration);
-                bot.failSafeSkipTimer = setInterval(function() {console.log(API.moderateForceSkip()},duration);
+                bot.failSafeSkipTimer = setInterval(function() {API.moderateForceSkip();},duration);
             }
 
 
