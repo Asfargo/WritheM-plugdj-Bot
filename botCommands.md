@@ -10,6 +10,8 @@ User
 |Command | Arguments |  Description |
 |:------:|:---------:|:--------------------------------------:|
 |!8ball | (message) | ask the bot a question, the bot will return random variations of a yes or no answer. |
+|!afk | (reason) | mark yourself as afk, so if someone tries to ping you, the bot will respond on your behalf |
+|!afkdisable |  | mark yourself as returned from afk |
 |!autowoot | | links to PlugCubed, the advised script/plugin to use for autowooting |
 |!ba | | explains the Brand Ambassador rank |
 |!commands | | gives a link to the commands |
@@ -48,6 +50,7 @@ Bouncer
 |:------:|:---------:|:--------------------------------------:|
 |!active | (X) | shows how many users chatted in the past X minutes. If no X specified, 60 is set as default |
 |!afkreset | @user | resets the afk time of user |
+|!afkdisable | @user | disables the afk auto responder for a specified user |
 |!afktime | @user | shows how long user has been afk |
 |!autodisable | | toggle the autodisable |
 |!ban | @user | bans user for 1 day |

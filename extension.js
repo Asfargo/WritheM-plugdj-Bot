@@ -128,6 +128,75 @@
             }
         };
 
+        bot.commands.seenCommand = {
+            command: 'seen',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    console.log(bot.userUtilities.getLastActivity(chat.message.substr(cmd.length + 1)));
+                    API.sendChat("Not implemented yet");
+                }
+            }
+        };
+
+        bot.commands.afkCommand = {
+            command: 'afk',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    // add user with timestamp to the array and reason
+                    var afkUser = {
+                        un: chat.un,
+                        uid: chat.uid,
+                        timestamp: new Date().getTime(),
+                        reason: (chat.message.length > cmd.length + 1 ? chat.message.substr(cmd.length + 1):"no reason provided")
+                    }
+                    bot.writhemAfkList[chat.un] = afkUser;
+                    API.sendChat("[@" + chat.un + "] You have been marked as AFK, if anyone tries to page you, I will respond on your behalf.");
+                    localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
+                }
+            }
+        };
+
+        bot.commands.afkdisableCommand = {
+            command: 'afkdisable',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    if (chat.message.length > (cmd.length + 2)
+                        && bot.commands.executable("bouncer",chat)) {
+                        // deal with a username passed
+                        var user = chat.message.substr(cmd.length + 2);
+                        if (typeof bot.writhemAfkList[user] !== 'undefined') {
+                            API.sendChat("[@" + chat.un + "] " + user + " has been marked as returned, I will no longer respond on their behalf.");
+                            delete bot.writhemAfkList[user];
+                            localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
+                        }
+                        else {
+                            API.sendChat("[@" + chat.un + "] " + user + " was not marked as AFK to begin with, so I will continue not responding on their behalf.  *scoff*");
+                        }
+
+                    }
+                    else {
+                        // self
+                        if (typeof bot.writhemAfkList[chat.un] !== 'undefined') {
+                            API.sendChat("[@" + chat.un + "] You have been marked as returned, I will no longer respond on your behalf.");
+                            delete bot.writhemAfkList[chat.un];
+                            localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
+                        }
+                    }
+                }
+            }
+        };
 
         /* ************************* *
         * DEFAULT COMMAND OVERLOADS *
@@ -170,26 +239,66 @@
             }
         };
 
-        /* ******************************** *
+         /* ******************************* *
          * WRITHEM EVENT HANDLER OVERLOADS *
-         * ****************************** */
+        * ******************************* */
 
-        var overloads = {
-            eventChat: $.proxy(function(chat) {console.log(chat)}, this)
+        bot.writhemEvents = {
+            catchAFKPing: function (chat) {
+                var regexp = RegExp('(:?^| )@(.+)');
+                var regResult = regexp.exec(chat.message);
+                if (regResult != null){
+                    var catches = regResult[2].split(" ");
+                    var caught = false;
+                    var user = null;
+                    if (typeof bot.writhemAfkList[catches[0]] !== 'undefined') {
+                        caught = true;user = catches[0];
+                    } else if (typeof bot.writhemAfkList[catches[0] + " " + catches[1]] !== 'undefined') {
+                        caught = true;user = catches[0] + " " + catches[1];
+                    }
+
+                    if (caught) {
+                        API.sendChat("[@"+chat.un+"] Sorry "+ user +" has been marked afk for approx "+bot.roomUtilities.msToStr(new Date().getTime() - bot.writhemAfkList[user].timestamp)+" : '"+ bot.writhemAfkList[user].reason+"' ");
+                    }
+                }
+            },
+            breakAFKChat: function(chat) {
+                if (typeof bot.writhemAfkList[chat.un] !== 'undefined'
+                    && (new Date().getTime() - bot.writhemAfkList[chat.un].timestamp) > 30) {
+                    API.sendChat("[@" + chat.un + "] You have been marked as returned, I will no longer respond on your behalf.");
+                    delete bot.writhemAfkList[chat.un]
+                    localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
+                }
+            }
+
+        }
+        var proxy = {
+            eventChat: $.proxy(function(chat) {
+                bot.writhemEvents.catchAFKPing(chat);
+                bot.writhemEvents.breakAFKChat(chat);
+            }, this)
         };
         bot.connectAPI = function() {
             API.chatLog("Loading WritheM Specific Event Handlers...")
 
-            API.on(API.CHAT, overloads.eventChat);
+            API.on(API.CHAT, proxy.eventChat);
         }
         var basicBotDisconnect = bot.disconnectAPI;
         bot.disconnectAPI = function() {
-            API.off(API.CHAT, overloads.eventChat);
+            API.off(API.CHAT, proxy.eventChat);
 
             basicBotDisconnect();
         }
-        bot.connectAPI();
 
+         /* **************** *
+         * WRITHEM START UP *
+        * **************** */
+
+        bot.connectAPI();
+        var afkList = JSON.parse(localStorage.getItem("writhemAfkList"));
+        if (afkList === null || typeof afkList === 'undefined')
+            afkList = {};
+        bot.writhemAfkList = afkList;
 
         //Load the chat package again to account for any changes
         bot.loadChat();
