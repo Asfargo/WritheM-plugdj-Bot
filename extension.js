@@ -284,9 +284,13 @@
                 var duration = (obj.media.duration*1000)+5000;
                 console.log(duration);
                 bot.failSafeSkipTimer = setInterval(function() {API.moderateForceSkip();},duration);
+            },
+            removeNonDJAfterPlay: function(obj) {
+                console.log(obj);
+                if (obj.lastPlay.dj.role < 1) {
+                    API.moderateRemoveDJ(obj.lastPlay.dj.id);
+                }
             }
-
-
         }
         var proxy = {
             eventChat: $.proxy(function(chat) {
@@ -295,6 +299,7 @@
             }, this),
             eventDJAdvance: $.proxy(function(obj) {
                 bot.writhemEvents.advanceFailSafe(obj);
+                bot.writhemEvents.removeNonDJAfterPlay(obj);
             }, this)
         };
         bot.writhemAPI = function() {
@@ -383,8 +388,9 @@
         songstats: false,
         commandLiteral: "!",
         blacklists: {
-            NSFW: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/ExampleNSFWlist.json",
-            OP: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/ExampleOPlist.json"
+            NSFW: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/NSFWlist.json",
+            OP: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/OPlist.json",
+            TROLL: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/Trolllist.json"
         }
     }));
 
