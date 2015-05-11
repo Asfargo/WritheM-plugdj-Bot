@@ -390,7 +390,7 @@
         blacklists: {
             NSFW: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/NSFWlist.json",
             OP: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/OPlist.json",
-            TROLL: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/Trolllist.json"
+            troll: "https://rawgit.com/" + fork + "/WritheM-plugdj-Bot/master/blacklists/Trolllist.json"
         }
     }));
 
