@@ -3,6 +3,9 @@
     width: 500% !important;
     height: 500% !important;
 }
+#playback .background img {
+    display: none !important;
+}
 #user-lists .list.staff .group {
     background: linear-gradient(to right,rgba(0, 0, 0, 0) 0,rgba(0, 0, 0, 1) 100%) !important;
 }
