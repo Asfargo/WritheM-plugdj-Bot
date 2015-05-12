@@ -65,7 +65,7 @@
                         // deal with a username passed
                         var user = chat.message.substr(cmd.length + 2);
                         if (typeof bot.writhemAfkList[user] !== 'undefined') {
-                            API.sendChat("[@" + chat.un + "] " + user + " has been marked as returned, I will no longer respond on their behalf.");
+                            API.sendChat("[@" + chat.un + "] " + user + " has been marked as returned, I will no longer respond on their behalf. They were gone for: "+bot.roomUtilities.msToStr(new Date().getTime() - bot.writhemAfkList[user].timestamp));
                             delete bot.writhemAfkList[user];
                             localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
                         }
@@ -77,7 +77,7 @@
                     else {
                         // self
                         if (typeof bot.writhemAfkList[chat.un] !== 'undefined') {
-                            API.sendChat("[@" + chat.un + "] You have been marked as returned, I will no longer respond on your behalf.");
+                            API.sendChat("[@" + chat.un + "] You have been marked as returned, I will no longer respond on your behalf. You were gone for approx: "+bot.roomUtilities.msToStr(new Date().getTime() - bot.writhemAfkList[chat.un].timestamp));
                             delete bot.writhemAfkList[chat.un];
                             localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
                         }
@@ -274,7 +274,7 @@
             breakAFKChat: function(chat) {
                 if (typeof bot.writhemAfkList[chat.un] !== 'undefined'
                     && (new Date().getTime() - bot.writhemAfkList[chat.un].timestamp) > 30) {
-                    API.sendChat("[@" + chat.un + "] You have been marked as returned, I will no longer respond on your behalf.");
+                    API.sendChat("[@" + chat.un + "] You have been marked as returned, I will no longer respond on your behalf. You were gone for approx: "+bot.roomUtilities.msToStr(new Date().getTime() - bot.writhemAfkList[chat.un].timestamp));
                     delete bot.writhemAfkList[chat.un]
                     localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
                 }
@@ -300,18 +300,34 @@
             eventDJAdvance: $.proxy(function(obj) {
                 bot.writhemEvents.advanceFailSafe(obj);
                 bot.writhemEvents.removeNonDJAfterPlay(obj);
+                bot.writhemStats();
+            }, this),
+            eventUserJoin: $.proxy(function(obj) {
+                bot.writhemStats();
+            }, this),
+            eventUserLeave: $.proxy(function(obj) {
+                bot.writhemStats();
+            }, this),
+            eventWaitlistUpdate: $.proxy(function(obj) {
+                bot.writhemStats();
             }, this)
         };
         bot.writhemAPI = function() {
             API.chatLog("Loading WritheM Specific Event Handlers...")
 
-            API.on(API.CHAT, proxy.eventChat);
             API.on(API.ADVANCE, proxy.eventDJAdvance);
+            API.on(API.CHAT, proxy.eventChat);
+            API.on(API.USER_JOIN, proxy.eventUserJoin);
+            API.on(API.USER_LEAVE, proxy.eventUserLeave);
+            API.on(API.WAIT_LIST_UPDATE, proxy.eventWaitlistUpdate);
         }
         var basicBotDisconnect = bot.disconnectAPI;
         bot.disconnectAPI = function() {
-            API.off(API.CHAT, proxy.eventChat);
             API.off(API.ADVANCE,proxy.eventDJAdvance);
+            API.off(API.CHAT, proxy.eventChat);
+            API.off(API.USER_JOIN, proxy.eventUserJoin);
+            API.off(API.USER_LEAVE, proxy.eventUserLeave);
+            API.off(API.WAIT_LIST_UPDATE, proxy.eventWaitlistUpdate);
 
             basicBotDisconnect();
         }
@@ -329,6 +345,28 @@
 
         //Load the chat package again to account for any changes
         bot.loadChat();
+
+        bot.writhemStats = function() {
+            window.clearInterval(bot.writhemStatsTimer);
+            var url = "https://news.writhem.com/radio/stats/?rrd=plug";
+            var data = {};
+            data.djs = API.getWaitList().length + (typeof API.getDJ() === 'undefined'?0:1);
+            data.listeners = API.getUsers().length;
+            data.friends = 0;
+            data = JSON.stringify(data);
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                success: function(resp) {
+                    API.chatLog(resp);
+                },
+                dataType: 'json'
+            });
+            bot.writhemStatsTimer = setInterval(function() {bot.writhemStats();},30*1000);
+        }
+        bot.writhemStats();
 
     }
 
