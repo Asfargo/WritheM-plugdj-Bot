@@ -348,7 +348,7 @@
 
         bot.writhemStats = function() {
             window.clearInterval(bot.writhemStatsTimer);
-            var url = "https://news.writhem.com/radio/stats/?rrd=plug";
+            var url = "https://10.1.1.15/radio/stats/?rrd=plug";
             var data = {};
             data.djs = API.getWaitList().length + (typeof API.getDJ() === 'undefined'?0:1);
             data.listeners = API.getUsers().length;
