@@ -353,7 +353,7 @@
             data.djs = API.getWaitList().length + (typeof API.getDJ() === 'undefined'?0:1);
             data.listeners = API.getUsers().length;
             data.friends = 0;
-            data = JSON.stringify(data);
+            data = "["+JSON.stringify(data)+"]";
             console.log(data);
             $.ajax({
                 type: "POST",
