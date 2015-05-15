@@ -184,8 +184,47 @@
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
                 else {
-                    console.log(bot.userUtilities.getLastActivity(chat.message.substr(cmd.length + 1)));
-                    API.sendChat("Not implemented yet");
+                    var searchUser = chat.message.substr(cmd.length +2);
+                    var found = false;
+                    for (var i = 0; i < bot.room.users.length; i++) {
+                        if (bot.room.users[i].username === searchUser) {
+                            found = bot.room.users[i];
+                            if (found.inRoom) {
+                                API.sendChat("[@" + chat.un + "] You silly goose! Open your eyes! @"+searchUser+ " is right here.");
+                            } else {
+                                API.sendChat("[@" + chat.un + "] I last saw @" + searchUser + " " + bot.roomUtilities.msToStr(new Date().getTime() - found.lastActivity)+ " ago.");
+                            }
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        API.sendChat("Sorry I have not seen "+searchUser+". Make sure to include the @ to help me find them.")
+                    }
+                }
+            }
+        };
+
+        bot.commands.userStatsCommand = {
+            command: 'userStats',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            type: 'exact', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    for (var i = 0; i < bot.room.users.length; i++) {
+                        if (bot.room.users[i].id === chat.uid) {
+                            var s = "[@" + chat.un + "]";
+                            s += " I first saw you here: " + bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].jointime)+" ago.";
+                            var score = (bot.room.users[i].votes.curate * 10)
+                                +(bot.room.users[i].votes.woot * 5)
+                                +(bot.room.users[i].votes.meh * 1);
+                            s += " You have a WritheM Score of "+score+".";
+                            s += " And your last activity was "+ bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].lastActivity)+" ago, obviously.";
+                            API.sendChat(s);
+                        }
+                    }
+
                 }
             }
         };
@@ -252,46 +291,49 @@
          * WRITHEM EVENT HANDLER OVERLOADS *
         * ******************************* */
 
-        bot.writhemEvents = {
-            catchAFKPing: function (chat) {
-                var regexp = RegExp('(:?^| )@(.+)');
-                var regResult = regexp.exec(chat.message);
-                if (regResult != null){
-                    var catches = regResult[2].split(" ");
-                    var caught = false;
-                    var user = null;
-                    if (typeof bot.writhemAfkList[catches[0]] !== 'undefined') {
-                        caught = true;user = catches[0];
-                    } else if (typeof bot.writhemAfkList[catches[0] + " " + catches[1]] !== 'undefined') {
-                        caught = true;user = catches[0] + " " + catches[1];
-                    }
+        bot.writhemEvents = {};
+        bot.writhemEvents.catchAFKPing = function (chat) {
+            var regexp = RegExp('(:?^| )@(.+)');
+            var regResult = regexp.exec(chat.message);
+            if (regResult != null){
+                var catches = regResult[2].split(" ");
+                var caught = false;
+                var user = null;
+                if (typeof bot.writhemAfkList[catches[0]] !== 'undefined') {
+                    caught = true;user = catches[0];
+                } else if (typeof bot.writhemAfkList[catches[0] + " " + catches[1]] !== 'undefined') {
+                    caught = true;user = catches[0] + " " + catches[1];
+                }
 
-                    if (caught) {
-                        API.sendChat("[@"+chat.un+"] Sorry "+ user +" has been marked afk for approx "+bot.roomUtilities.msToStr(new Date().getTime() - bot.writhemAfkList[user].timestamp)+" : '"+ bot.writhemAfkList[user].reason+"' ");
-                    }
-                }
-            },
-            breakAFKChat: function(chat) {
-                if (typeof bot.writhemAfkList[chat.un] !== 'undefined'
-                    && (new Date().getTime() - bot.writhemAfkList[chat.un].timestamp) > 30) {
-                    API.sendChat("[@" + chat.un + "] You have been marked as returned, I will no longer respond on your behalf. You were gone for approx: "+bot.roomUtilities.msToStr(new Date().getTime() - bot.writhemAfkList[chat.un].timestamp));
-                    delete bot.writhemAfkList[chat.un]
-                    localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
-                }
-            },
-            advanceFailSafe: function(obj) {
-                window.clearInterval(bot.failSafeSkipTimer);
-                var duration = (obj.media.duration*1000)+5000;
-                console.log(duration);
-                bot.failSafeSkipTimer = setInterval(function() {API.moderateForceSkip();},duration);
-            },
-            removeNonDJAfterPlay: function(obj) {
-                console.log(obj);
-                if (obj.lastPlay.dj.role < 1) {
-                    API.moderateRemoveDJ(obj.lastPlay.dj.id);
+                if (caught) {
+                    API.sendChat("[@"+chat.un+"] Sorry "+ user +" has been marked afk for approx "+bot.roomUtilities.msToStr(new Date().getTime() - bot.writhemAfkList[user].timestamp)+" : '"+ bot.writhemAfkList[user].reason+"' ");
                 }
             }
-        }
+        };
+
+        bot.writhemEvents.breakAFKChat = function(chat) {
+            if (typeof bot.writhemAfkList[chat.un] !== 'undefined'
+                && (new Date().getTime() - bot.writhemAfkList[chat.un].timestamp) > 30) {
+                API.sendChat("[@" + chat.un + "] You have been marked as returned, I will no longer respond on your behalf. You were gone for approx: "+bot.roomUtilities.msToStr(new Date().getTime() - bot.writhemAfkList[chat.un].timestamp));
+                delete bot.writhemAfkList[chat.un]
+                localStorage.setItem("writhemAfkList", JSON.stringify(bot.writhemAfkList));
+            }
+        };
+
+        bot.writhemEvents.advanceFailSafe = function(obj) {
+            window.clearInterval(bot.failSafeSkipTimer);
+            var duration = (obj.media.duration*1000)+5000;
+            console.log(duration);
+            bot.failSafeSkipTimer = setInterval(function() {API.moderateForceSkip();},duration);
+        };
+
+        bot.writhemEvents.removeNonDJAfterPlay = function(obj) {
+            console.log(obj);
+            if (obj.lastPlay.dj.role < 1) {
+                API.moderateRemoveDJ(obj.lastPlay.dj.id);
+            }
+        };
+
         var proxy = {
             eventChat: $.proxy(function(chat) {
                 bot.writhemEvents.catchAFKPing(chat);
@@ -312,6 +354,10 @@
                 bot.writhemStats();
             }, this)
         };
+         /* **************** *
+         * WRITHEM START UP *
+        * **************** */
+
         bot.writhemAPI = function() {
             API.chatLog("Loading WritheM Specific Event Handlers...")
 
@@ -332,10 +378,6 @@
             basicBotDisconnect();
         }
 
-         /* **************** *
-         * WRITHEM START UP *
-        * **************** */
-
         bot.writhemAPI();
         var afkList = JSON.parse(localStorage.getItem("writhemAfkList"));
         if (afkList === null || typeof afkList === 'undefined')
@@ -348,7 +390,7 @@
 
         bot.writhemStats = function() {
             window.clearInterval(bot.writhemStatsTimer);
-            var url = "https://10.1.1.15/radio/stats/?rrd=plug";
+            var url = "https://news.writhem.com/radio/stats/?rrd=plug";
             var data = {};
             data.djs = API.getWaitList().length + (typeof API.getDJ() === 'undefined'?0:1);
             data.listeners = API.getUsers().length;
