@@ -100,6 +100,45 @@
             }
         };
 
+        bot.commands.infoCommand = {
+            command: 'info',  //The command to be called. With the standard command literal this would be: !bacon
+            rank: 'user', //Minimum user permission to use the command
+            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
+            functionality: function (chat, cmd) {
+                if (chat.message.length !== cmd.length) {
+                    var searchUser = chat.message.substr(cmd.length + 2);
+                    for (var i = 0; i < bot.room.users.length; i++) {
+                        if (bot.room.users[i].username == searchUser) {
+                            var s = "[@" + chat.un + "]";
+                            s += " I first saw "+searchUser+" here: " + bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].jointime)+" ago.";
+                            var score = (bot.room.users[i].votes.curate * 10)
+                                +(bot.room.users[i].votes.woot * 5)
+                                +(bot.room.users[i].votes.meh * -10);
+                            s += " They have a WritheM Score of "+score+".";
+                            s += " And their last activity was "+ bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].lastActivity)+" ago.";
+                            API.sendChat(s);
+                        }
+                    }
+                }
+                else
+                {
+                    for (var i = 0; i < bot.room.users.length; i++) {
+                        if (bot.room.users[i].id === chat.uid) {
+                            var s = "[@" + chat.un + "]";
+                            s += " I first saw you here: " + bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].jointime)+" ago.";
+                            var score = (bot.room.users[i].votes.curate * 10)
+                                +(bot.room.users[i].votes.woot * 5)
+                                +(bot.room.users[i].votes.meh * -10);
+                            s += " You have a WritheM Score of "+score+".";
+                            s += " And your last activity was "+ bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].lastActivity)+" ago, obviously.";
+                            API.sendChat(s);
+                        }
+                    }
+
+                }
+            }
+        };
+
         bot.commands.rcsCommand = {
             command: 'rcs',  //The command to be called. With the standard command literal this would be: !bacon
             rank: 'user', //Minimum user permission to use the command
@@ -200,45 +239,6 @@
                     if (!found) {
                         API.sendChat("Sorry I have not seen "+searchUser+". Make sure to include the @ to help me find them.")
                     }
-                }
-            }
-        };
-
-        bot.commands.userStatsCommand = {
-            command: 'userStats',  //The command to be called. With the standard command literal this would be: !bacon
-            rank: 'user', //Minimum user permission to use the command
-            type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
-            functionality: function (chat, cmd) {
-                if (chat.message.length !== cmd.length) {
-                    var searchUser = chat.message.substr(cmd.length + 2);
-                    for (var i = 0; i < bot.room.users.length; i++) {
-                        if (bot.room.users[i].username == searchUser) {
-                            var s = "[@" + chat.un + "]";
-                            s += " I first saw "+searchUser+" here: " + bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].jointime)+" ago.";
-                            var score = (bot.room.users[i].votes.curate * 10)
-                                +(bot.room.users[i].votes.woot * 5)
-                                +(bot.room.users[i].votes.meh * -10);
-                            s += " They have a WritheM Score of "+score+".";
-                            s += " And their last activity was "+ bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].lastActivity)+" ago.";
-                            API.sendChat(s);
-                        }
-                    }
-                }
-                else
-                {
-                    for (var i = 0; i < bot.room.users.length; i++) {
-                        if (bot.room.users[i].id === chat.uid) {
-                            var s = "[@" + chat.un + "]";
-                            s += " I first saw you here: " + bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].jointime)+" ago.";
-                            var score = (bot.room.users[i].votes.curate * 10)
-                                +(bot.room.users[i].votes.woot * 5)
-                                +(bot.room.users[i].votes.meh * -10);
-                            s += " You have a WritheM Score of "+score+".";
-                            s += " And your last activity was "+ bot.roomUtilities.msToStr(new Date().getTime() - bot.room.users[i].lastActivity)+" ago, obviously.";
-                            API.sendChat(s);
-                        }
-                    }
-
                 }
             }
         };
