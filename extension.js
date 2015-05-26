@@ -404,11 +404,49 @@
 
         bot.writhemStats = function() {
             window.clearInterval(bot.writhemStatsTimer);
-            var url = "https://news.writhem.com/radio/stats/?rrd=plug";
+            var url = "https://news.writhem.com/radio/stats/?rrd=plug2";
+            var users = API.getUsers();
             var data = {};
             data.djs = API.getWaitList().length + (typeof API.getDJ() === 'undefined'?0:1);
-            data.listeners = API.getUsers().length;
-            data.friends = 0;
+            data.listeners = users.length;
+            data.user = 0;
+            data.residentDJ = 0;
+            data.bouncer = 0;
+            data.manager = 0;
+            data.coHost = 0;
+            data.host = 0;
+            data.brandAmbassador = 0;
+            data.admin = 0;
+            var levels = {};
+            levels.count = 0;
+            levels.sum = 0;
+            for (var i = 0;i < users.length;++i) {
+                var rawrank = users[i].role;
+                if (rawrank == "0"){
+                    ++data.user;
+                } else if (rawrank == "1"){
+                    ++data.residentDJ;
+                } else if (rawrank == "2"){
+                    ++data.bouncer;
+                } else if (rawrank == "3"){
+                    ++data.manager;
+                } else if (rawrank == "4"){
+                    ++data.coHost;
+                } else if (rawrank == "5"){
+                    ++data.host;
+                } else if (rawrank == "7"){
+                    ++data.brandAmbassador;
+                } else if (rawrank == "10"){
+                    ++data.admin;
+                } else {
+                    ++data.user;
+                    console.log(users[i])
+                }
+                ++levels.count;
+                levels.sum = levels.sum + users[i].level;
+                data.avgLevel = levels.sum / levels.count;
+
+            }
             data = "["+JSON.stringify(data)+"]";
             console.log(data);
             $.ajax({
