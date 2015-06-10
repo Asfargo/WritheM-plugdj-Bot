@@ -249,6 +249,7 @@
             type: 'startsWith', //Specify if it can accept variables or not (if so, these have to be handled yourself through the chat.message
             url: 'https://news.writhem.com/wolfram/?q=', // this is a private url and can't be accessed outside the writhem network. dont' bother even trying. ;-)
             functionality: function (chat, cmd) {
+                /*
                 if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
                 if (!bot.commands.executable(this.rank, chat)) return void (0);
                 else { 
@@ -256,7 +257,7 @@
                     $.post(this.url+encodeURIComponent(msg),function( data ) {
                         API.sendChat("[@" + chat.un + "] " + data); 
                     });
-                }
+                }*/
             }
         };
 
@@ -299,6 +300,89 @@
             functionality: function (chat, cmd) {
                 API.sendChat('/me This bot was created by Matthew (Yemasthui), but is now maintained by Michael Writhe (pironic). You can find our open source fork at https://github.com/' + fork + '/WritheM-plugdj-Bot');
             }
+        };
+
+        bot.commands.gifCommand = {
+            command: ['gif', 'giphy'],
+                rank: 'user',
+                type: 'startsWith',
+                api_key: "dc6zaTOxFJmzC",
+                rating: "pg-13",
+                functionality: function (chat, cmd) {
+                    /*
+                if (this.type === 'exact' && chat.message.length !== cmd.length) return void (0);
+                if (!bot.commands.executable(this.rank, chat)) return void (0);
+                else {
+                    var msg = chat.message;
+                    if (msg.length !== cmd.length) {
+                        function get_id(fixedtag, func)
+                        {
+                            $.getJSON(
+                                "https://api.giphy.com/v1/gifs/random?",
+                                {
+                                    "format": "json",
+                                    "api_key": bot.commands.gifCommand.api_key,
+                                    "rating": bot.commands.gifCommand.rating,
+                                    "tag": fixedtag
+                                },
+                                function(response)
+                                {
+                                    func(response.data.id);
+                                }
+                            )
+                        }
+                        var tag = msg.substr(cmd.length + 1);
+                        get_id(tag, function(id) {
+                            if (typeof id !== 'undefined') {
+                                API.sendChat(subChat(bot.chat.validgiftags, {name: chat.un, id: id, tags: tag}));
+                            } else {
+                                API.sendChat(subChat(bot.chat.invalidgiftags, {name: chat.un, tags: tag}));
+                            }
+                        });
+                    }
+                    else {
+                        function get_random_id(func)
+                        {
+                            $.getJSON(
+                                "https://api.giphy.com/v1/gifs/random?",
+                                {
+                                    "format": "json",
+                                    "api_key": bot.commands.gifCommand.api_key,
+                                    "rating": bot.commands.gifCommand.rating
+                                },
+                                function(response)
+                                {
+                                    func(response.data.id);
+                                }
+                            )
+                        }
+                        get_random_id(function(id) {
+                            if (typeof id !== 'undefined') {
+                                API.sendChat(subChat(bot.chat.validgifrandom, {name: chat.un, id: id}));
+                            } else {
+                                API.sendChat(subChat(bot.chat.invalidgifrandom, {name: chat.un}));
+                            }
+                        });
+                    }
+                }*/
+            }
+        };
+
+         /* ************************* *
+         * WRITHEM SUPPORT FUNCTIONS *
+        * ************************* */
+
+        var subChat = function (chat, obj) {
+            if (typeof chat === "undefined") {
+                API.chatLog("There is a chat text missing.");
+                console.log("There is a chat text missing.");
+                return "[Error] No text message found.";
+            }
+            var lit = '%%';
+            for (var prop in obj) {
+                chat = chat.replace(lit + prop.toUpperCase() + lit, obj[prop]);
+            }
+            return chat;
         };
 
          /* ******************************* *
@@ -422,22 +506,22 @@
             levels.sum = 0;
             for (var i = 0;i < users.length;++i) {
                 var rawrank = users[i].role;
-                if (rawrank == "0"){
-                    ++data.user;
-                } else if (rawrank == "1"){
-                    ++data.residentDJ;
-                } else if (rawrank == "2"){
-                    ++data.bouncer;
-                } else if (rawrank == "3"){
-                    ++data.manager;
-                } else if (rawrank == "4"){
-                    ++data.coHost;
-                } else if (rawrank == "5"){
-                    ++data.host;
-                } else if (rawrank == "7"){
+                if (users[i].gRole == "5"){
+                    ++data.admin
+                } else if (parseInt(users[i].gRole) > 1){
                     ++data.brandAmbassador;
-                } else if (rawrank == "10"){
-                    ++data.admin;
+                } else if (rawrank == 0){
+                    ++data.user;
+                } else if (rawrank == 1){
+                    ++data.residentDJ;
+                } else if (rawrank == 2){
+                    ++data.bouncer;
+                } else if (rawrank == 3){
+                    ++data.manager;
+                } else if (rawrank == 4){
+                    ++data.coHost;
+                } else if (rawrank == 5){
+                    ++data.host;
                 } else {
                     ++data.user;
                     console.log(users[i])
@@ -515,7 +599,7 @@
         fbLink: "http://facebook.com/writhem",
         youtubeLink: null,
         website: "http://radio.writhem.com/",
-        intervalMessages: ["Thanks for migrating to the new platform with us! Welcome to WritheM Radio 3.0 Our 3rd host in 4 years."],
+        intervalMessages: null, //["Thanks for migrating to the new platform with us! Welcome to WritheM Radio 3.0 Our 3rd host in 4 years."],
         messageInterval: 10,
         songstats: false,
         commandLiteral: "!",
